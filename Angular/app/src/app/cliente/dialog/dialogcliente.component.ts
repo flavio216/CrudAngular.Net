@@ -11,7 +11,7 @@ import { ApiclienteService } from 'src/app/services/apicliente.service';
 
 export class DialogClienteComponent{
 
-    public cliNombre: string = "test";
+    public cliNombre: string = "";
     public cliId: number = 0;
 
     constructor(
@@ -21,10 +21,10 @@ export class DialogClienteComponent{
         @Inject(MAT_DIALOG_DATA) public cliente: Cliente
     )
     {
-        
+        if(this.cliente !== null){
             console.log(cliente);
             this.cliNombre = cliente.cliNombre;
-        
+        } 
     }
 
     close(){

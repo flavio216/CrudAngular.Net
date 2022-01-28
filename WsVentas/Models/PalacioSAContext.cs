@@ -19,6 +19,7 @@ namespace WsVentas.Models
 
         public virtual DbSet<Cliente> Clientes { get; set; }
         public virtual DbSet<DetalleVenta> DetalleVentas { get; set; }
+        public virtual DbSet<Login> Logins { get; set; }
         public virtual DbSet<Producto> Productos { get; set; }
         public virtual DbSet<Venta> Ventas { get; set; }
 
@@ -37,13 +38,11 @@ namespace WsVentas.Models
 
             modelBuilder.Entity<Cliente>(entity =>
             {
-                entity.HasKey(e => e.cliId);
+                entity.HasKey(e => e.CliId);
 
-                entity.Property(e => e.cliId)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("cli_Id");
+                entity.Property(e => e.CliId).HasColumnName("cli_Id");
 
-                entity.Property(e => e.CliNombre)
+                entity.Property(e => e.cliNombre)
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("cli_Nombre");
@@ -73,11 +72,6 @@ namespace WsVentas.Models
 
                 entity.Property(e => e.DveVenId).HasColumnName("dve_ven_Id");
 
-                entity.HasOne(d => d.DveCli)
-                    .WithMany(p => p.DetalleVenta)
-                    .HasForeignKey(d => d.DveCliId)
-                    .HasConstraintName("FK_DetalleVentas_Clientes");
-
                 entity.HasOne(d => d.DvePrd)
                     .WithMany(p => p.DetalleVenta)
                     .HasForeignKey(d => d.DvePrdId)
@@ -87,6 +81,30 @@ namespace WsVentas.Models
                     .WithMany(p => p.DetalleVenta)
                     .HasForeignKey(d => d.DveVenId)
                     .HasConstraintName("FK_DetalleVentas_Ventas");
+            });
+
+            modelBuilder.Entity<Login>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("Login");
+
+                entity.Property(e => e.LogEmail)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("log_Email");
+
+                entity.Property(e => e.LogId).HasColumnName("log_Id");
+
+                entity.Property(e => e.LogNombre)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("log_Nombre");
+
+                entity.Property(e => e.LogPassword)
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("log_Password");
             });
 
             modelBuilder.Entity<Producto>(entity =>

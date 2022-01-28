@@ -8,7 +8,7 @@ namespace WsVentas.Models
     public class ClienteRequest
     {
         public int cliId { get; set; }
-
-        public string CliNombre { get; set; }
+            
+        public string cliNombre { get; set; }
     }
 }

@@ -15,7 +15,6 @@ namespace WsVentas.Models
         public int? DvePrdId { get; set; }
         public int? DveCliId { get; set; }
 
-        public virtual Cliente DveCli { get; set; }
         public virtual Producto DvePrd { get; set; }
         public virtual Venta DveVen { get; set; }
     }

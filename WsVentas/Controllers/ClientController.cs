@@ -9,6 +9,7 @@ namespace WsVentas.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ClientController : ControllerBase
     {
         [HttpGet]
@@ -20,7 +21,7 @@ namespace WsVentas.Controllers
                 using (PalacioSAContext db = new PalacioSAContext())
                 {
 
-                    var lst = db.Clientes.OrderByDescending(d => d.cliId).ToList();
+                    var lst = db.Clientes.OrderByDescending(d => d.CliId).ToList();
                     oRespuesta.Exito = 1;
                     oRespuesta.Data = lst;
                 }
@@ -43,12 +44,12 @@ namespace WsVentas.Controllers
                 using (PalacioSAContext db = new PalacioSAContext())
                 {
                     Cliente oCliente = new Cliente();
-                    oCliente.CliNombre = oModel.CliNombre;
+                    oCliente.cliNombre = oModel.cliNombre;
                     db.Clientes.Add(oCliente);
                     db.SaveChanges();
                     oRespuesta.Exito = 1;
                 }
-                   
+
             }
             catch (Exception ex)
             {
@@ -67,7 +68,7 @@ namespace WsVentas.Controllers
                 using (PalacioSAContext db = new PalacioSAContext())
                 {
                     Cliente oCliente = db.Clientes.Find(oModel.cliId);
-                    oCliente.CliNombre = oModel.CliNombre;
+                    oCliente.cliNombre = oModel.cliNombre;
                     db.Entry(oCliente).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                     db.SaveChanges();
                     oRespuesta.Exito = 1;

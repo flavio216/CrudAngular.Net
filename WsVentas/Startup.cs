@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -6,11 +7,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using WsVentas.Models.Common;
+using WsVentas.Services;
 
 namespace WsVentas
 {
@@ -39,6 +44,34 @@ namespace WsVentas
             });
 
             services.AddControllers();
+
+            var appSetingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSetingsSection);
+
+
+            //Creamos el JWT Json Web Token
+            var appSettings = appSetingsSection.Get<AppSettings>();
+            var token = Encoding.ASCII.GetBytes(appSettings.Secreto);
+            services.AddAuthentication(d =>
+            {
+                d.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                d.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(d =>
+                {
+                    d.RequireHttpsMetadata = false;
+                    d.SaveToken = true;
+                    d.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(token),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });//Damos de alta en el servicio al jwt
+
+            services.AddScoped<ILoginService, LoginService>(); // Injectamos
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WsVentas", Version = "v1" });
@@ -60,7 +93,7 @@ namespace WsVentas
             app.UseRouting();
 
             app.UseCors(MiCors);
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
